@@ -1,5 +1,4 @@
-local player = game.Players.LocalPlayer
-local playerGui = game.StarterGui
+local starterGui = game:GetService("StarterGui")
 
 local function collectUIHierarchy(parent, path)
 	local currentPath = path and (path .. " > " .. parent.Name) or parent.Name
@@ -22,7 +21,7 @@ local function displayUIHierarchy(uiString)
 	local displayGui = Instance.new("ScreenGui")
 	displayGui.Name = "UIHierarchyDisplay"
 	displayGui.ResetOnSpawn = false
-	displayGui.Parent = playerGui
+	displayGui.Parent = starterGui -- Changed from playerGui to starterGui
 
 	local frame = Instance.new("Frame")
 	frame.Size = UDim2.new(0, 361, 0, 268)
@@ -48,11 +47,10 @@ local function checkAndDisplay(parent)
 
 	if #uiList > 0 then
 		local uiString = table.concat(uiList, "\n")
-
 		displayUIHierarchy(uiString)
 	end
 end
 
 wait(5)
 
-checkAndDisplay(playerGui)
+checkAndDisplay(starterGui)  -- Changed from playerGui to starterGui
