@@ -1,3 +1,5 @@
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 local starterGui = game:GetService("StarterGui")
 
 local function collectUIHierarchy(parent, path)
@@ -18,11 +20,13 @@ local function collectUIHierarchy(parent, path)
 end
 
 local function displayUIHierarchy(uiString)
+	-- Create a ScreenGui in PlayerGui to display the UI hierarchy
 	local displayGui = Instance.new("ScreenGui")
 	displayGui.Name = "UIHierarchyDisplay"
 	displayGui.ResetOnSpawn = false
-	displayGui.Parent = starterGui -- Changed from playerGui to starterGui
+	displayGui.Parent = playerGui  -- This is in PlayerGui to make it visible to the player
 
+	-- Create a Frame with the specified position and size
 	local frame = Instance.new("Frame")
 	frame.Size = UDim2.new(0, 361, 0, 268)
 	frame.Position = UDim2.new(0.311, 0, 0.239, 0)
@@ -30,13 +34,12 @@ local function displayUIHierarchy(uiString)
 	frame.BackgroundColor3 = Color3.new(0, 0, 0)
 	frame.Parent = displayGui
 
+	-- Create a TextLabel inside the Frame with the specified position and size
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Size = UDim2.new(0, 361, 0, 268)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.Text = uiString
 	textLabel.TextScaled = true 
-	wait(1)
-	textLabel.TextScaled = false
 	textLabel.BackgroundTransparency = 1  
 	textLabel.TextColor3 = Color3.new(1, 1, 1)
 	textLabel.Parent = frame
@@ -47,10 +50,13 @@ local function checkAndDisplay(parent)
 
 	if #uiList > 0 then
 		local uiString = table.concat(uiList, "\n")
+
+		-- Display the collected UI hierarchy in the player's GUI
 		displayUIHierarchy(uiString)
 	end
 end
 
 wait(5)
 
-checkAndDisplay(starterGui)  -- Changed from playerGui to starterGui
+-- Collect UI hierarchy from StarterGui and display it in PlayerGui
+checkAndDisplay(starterGui)
