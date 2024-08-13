@@ -26,25 +26,30 @@ local function displayUIHierarchy(uiString)
 	displayGui.ResetOnSpawn = false
 	displayGui.Parent = playerGui  -- This is in PlayerGui to make it visible to the player
 
-	-- Create a Frame with the specified position and size
-	local frame = Instance.new("ScrollingFrame")
-	frame.Size = UDim2.new(0, 361, 0, 268)
-	frame.Position = UDim2.new(0.311, 0, 0.239, 0)
-	frame.BackgroundTransparency = 0.3
-	frame.BackgroundColor3 = Color3.new(0, 0, 0)
-	frame.Parent = displayGui
+	-- Create a ScrollingFrame with the specified position and size
+	local scrollingFrame = Instance.new("ScrollingFrame")
+	scrollingFrame.Size = UDim2.new(0, 361, 0, 268)
+	scrollingFrame.Position = UDim2.new(0.311, 0, 0.239, 0)
+	scrollingFrame.BackgroundTransparency = 0.3
+	scrollingFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+	scrollingFrame.ScrollBarThickness = 12
+	scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)  -- Initialize CanvasSize
+	scrollingFrame.Parent = displayGui
 
-	-- Create a TextLabel inside the Frame with the specified position and size
+	-- Create a TextLabel inside the ScrollingFrame with dynamic size based on content
 	local textLabel = Instance.new("TextLabel")
-	textLabel.Size = UDim2.new(0, 361, 0, 268)
+	textLabel.Size = UDim2.new(1, 0, 0, 0)  -- Set initial size (1 wide, 0 height)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.Text = uiString
-	textLabel.TextScaled = true
-        wait(5)
-        textLabel.TextScaled = false
+	textLabel.TextScaled = false
 	textLabel.BackgroundTransparency = 1  
 	textLabel.TextColor3 = Color3.new(1, 1, 1)
-	textLabel.Parent = frame
+	textLabel.TextYAlignment = Enum.TextYAlignment.Top  -- Align text to the top
+	textLabel.Parent = scrollingFrame
+
+	-- Resize the TextLabel and ScrollingFrame's CanvasSize based on the text size
+	textLabel.Size = UDim2.new(1, 0, 0, textLabel.TextBounds.Y)
+	scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, textLabel.TextBounds.Y)
 end
 
 local function checkAndDisplay(parent)
