@@ -36,22 +36,33 @@ local function displayHierarchy(itemList)
 	scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)  -- Initialize CanvasSize
 	scrollingFrame.Parent = displayGui
 
-	-- Create a TextLabel inside the ScrollingFrame to hold the text
-	local textLabel = Instance.new("TextLabel")
-	textLabel.Size = UDim2.new(1, 0, 0, 0)  -- Initial width with auto height
-	textLabel.Position = UDim2.new(0, 0, 0, 0)
-	textLabel.Text = table.concat(itemList, "\n")
-	textLabel.TextScaled = true
-	wait(5)
-	textLabel.TextScaled = false
-	textLabel.BackgroundTransparency = 1  
-	textLabel.TextColor3 = Color3.new(1, 1, 1)
-	textLabel.TextYAlignment = Enum.TextYAlignment.Top  -- Align text to the top
-	textLabel.Parent = scrollingFrame
+	-- Create a UIListLayout for automatically positioning TextLabels
+	local uiListLayout = Instance.new("UIListLayout")
+	uiListLayout.Parent = scrollingFrame
+	uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	uiListLayout.Padding = UDim.new(0, 2)
 
-	-- Adjust TextLabel and ScrollingFrame's CanvasSize to fit all content
-	textLabel.Size = UDim2.new(1, 0, 0, textLabel.TextBounds.Y)
-	scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, textLabel.TextBounds.Y)
+	-- Create a frame to hold the text labels
+	local textFrame = Instance.new("Frame")
+	textFrame.Size = UDim2.new(1, 0, 1, 0)
+	textFrame.BackgroundTransparency = 1
+	textFrame.Parent = scrollingFrame
+
+	-- Add a TextLabel for each item in the list
+	for i, item in ipairs(itemList) do
+		local textLabel = Instance.new("TextLabel")
+		textLabel.Size = UDim2.new(1, 0, 0, 30)  -- Fixed height for each item
+		textLabel.Position = UDim2.new(0, 0, 0, (i - 1) * 32)  -- Space items vertically
+		textLabel.Text = item
+		textLabel.TextScaled = true
+		textLabel.BackgroundTransparency = 1  
+		textLabel.TextColor3 = Color3.new(1, 1, 1)
+		textLabel.TextXAlignment = Enum.TextXAlignment.Left
+		textLabel.Parent = textFrame
+	end
+
+	-- Adjust ScrollingFrame's CanvasSize to fit all content
+	scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, #itemList * 32)
 end
 
 -- Function to collect player-specific information, including everything under the player
@@ -94,3 +105,4 @@ wait(5)
 
 -- Collect and display all necessary information
 checkAndDisplay()
+	
