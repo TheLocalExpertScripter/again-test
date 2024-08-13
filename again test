@@ -1,5 +1,4 @@
 local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
 local starterGui = game:GetService("StarterGui")
 
 -- Function to collect hierarchy of any object
@@ -18,51 +17,11 @@ local function collectHierarchy(parent, path)
 	return itemList
 end
 
--- Function to display collected hierarchy in a scrolling frame
+-- Function to display collected hierarchy in the output
 local function displayHierarchy(itemList)
-	-- Create a ScreenGui in PlayerGui to display the hierarchy
-	local displayGui = Instance.new("ScreenGui")
-	displayGui.Name = "HierarchyDisplay"
-	displayGui.ResetOnSpawn = false
-	displayGui.Parent = playerGui  -- Make it visible to the player
-
-	-- Create a ScrollingFrame with the specified position and size
-	local scrollingFrame = Instance.new("ScrollingFrame")
-	scrollingFrame.Size = UDim2.new(0, 361, 0, 268)
-	scrollingFrame.Position = UDim2.new(0.311, 0, 0.239, 0)
-	scrollingFrame.BackgroundTransparency = 0.3
-	scrollingFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-	scrollingFrame.ScrollBarThickness = 12
-	scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)  -- Initialize CanvasSize
-	scrollingFrame.Parent = displayGui
-
-	-- Create a UIListLayout for automatically positioning TextLabels
-	local uiListLayout = Instance.new("UIListLayout")
-	uiListLayout.Parent = scrollingFrame
-	uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-	uiListLayout.Padding = UDim.new(0, 2)
-
-	-- Create a frame to hold the text labels
-	local textFrame = Instance.new("Frame")
-	textFrame.Size = UDim2.new(1, 0, 1, 0)
-	textFrame.BackgroundTransparency = 1
-	textFrame.Parent = scrollingFrame
-
-	-- Add a TextLabel for each item in the list
-	for i, item in ipairs(itemList) do
-		local textLabel = Instance.new("TextLabel")
-		textLabel.Size = UDim2.new(1, 0, 0, 30)  -- Fixed height for each item
-		textLabel.Position = UDim2.new(0, 0, 0, (i - 1) * 32)  -- Space items vertically
-		textLabel.Text = item
-		textLabel.TextScaled = true
-		textLabel.BackgroundTransparency = 1  
-		textLabel.TextColor3 = Color3.new(1, 1, 1)
-		textLabel.TextXAlignment = Enum.TextXAlignment.Left
-		textLabel.Parent = textFrame
+	for _, item in ipairs(itemList) do
+		warn(item)
 	end
-
-	-- Adjust ScrollingFrame's CanvasSize to fit all content
-	scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, #itemList * 32)
 end
 
 -- Function to collect player-specific information, including everything under the player
@@ -97,7 +56,7 @@ local function checkAndDisplay()
 		table.insert(combinedInfo, info)
 	end
 
-	-- Display the combined hierarchy and player info
+	-- Display the combined hierarchy and player info in the output
 	displayHierarchy(combinedInfo)
 end
 
@@ -105,4 +64,3 @@ wait(5)
 
 -- Collect and display all necessary information
 checkAndDisplay()
-	
