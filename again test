@@ -2,29 +2,29 @@ local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local starterGui = game:GetService("StarterGui")
 
-local function collectUIHierarchy(parent, path)
+-- Function to collect hierarchy of any object
+local function collectHierarchy(parent, path)
 	local currentPath = path and (path .. " > " .. parent.Name) or parent.Name
-	local uiList = {}
+	local itemList = {}
 
 	for _, child in ipairs(parent:GetChildren()) do
-		if child:IsA("GuiObject") or child:IsA("ScreenGui") then
-			table.insert(uiList, currentPath .. " > " .. child.Name)
-			local childUIList = collectUIHierarchy(child, currentPath)
-			for _, subChild in ipairs(childUIList) do
-				table.insert(uiList, subChild)
-			end
+		table.insert(itemList, currentPath .. " > " .. child.Name)
+		local childItemList = collectHierarchy(child, currentPath)
+		for _, subChild in ipairs(childItemList) do
+			table.insert(itemList, subChild)
 		end
 	end
 
-	return uiList
+	return itemList
 end
 
-local function displayUIHierarchy(uiString)
-	-- Create a ScreenGui in PlayerGui to display the UI hierarchy
+-- Function to display collected hierarchy in a scrolling frame
+local function displayHierarchy(itemList)
+	-- Create a ScreenGui in PlayerGui to display the hierarchy
 	local displayGui = Instance.new("ScreenGui")
-	displayGui.Name = "UIHierarchyDisplay"
+	displayGui.Name = "HierarchyDisplay"
 	displayGui.ResetOnSpawn = false
-	displayGui.Parent = playerGui  -- This is in PlayerGui to make it visible to the player
+	displayGui.Parent = playerGui  -- Make it visible to the player
 
 	-- Create a ScrollingFrame with the specified position and size
 	local scrollingFrame = Instance.new("ScrollingFrame")
@@ -36,34 +36,61 @@ local function displayUIHierarchy(uiString)
 	scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)  -- Initialize CanvasSize
 	scrollingFrame.Parent = displayGui
 
-	-- Create a TextLabel inside the ScrollingFrame with dynamic size based on content
+	-- Create a TextLabel inside the ScrollingFrame to hold the text
 	local textLabel = Instance.new("TextLabel")
-	textLabel.Size = UDim2.new(1, 0, 0, 0)  -- Set initial size (1 wide, 0 height)
+	textLabel.Size = UDim2.new(1, 0, 0, 0)  -- Initial width with auto height
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
-	textLabel.Text = uiString
+	textLabel.Text = table.concat(itemList, "\n")
+	textLabel.TextScaled = true
+	wait(5)
 	textLabel.TextScaled = false
 	textLabel.BackgroundTransparency = 1  
 	textLabel.TextColor3 = Color3.new(1, 1, 1)
 	textLabel.TextYAlignment = Enum.TextYAlignment.Top  -- Align text to the top
 	textLabel.Parent = scrollingFrame
 
-	-- Resize the TextLabel and ScrollingFrame's CanvasSize based on the text size
+	-- Adjust TextLabel and ScrollingFrame's CanvasSize to fit all content
 	textLabel.Size = UDim2.new(1, 0, 0, textLabel.TextBounds.Y)
 	scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, textLabel.TextBounds.Y)
 end
 
-local function checkAndDisplay(parent)
-	local uiList = collectUIHierarchy(parent)
+-- Function to collect player-specific information, including everything under the player
+local function collectPlayerInfo()
+	local playerInfoList = {}
 
-	if #uiList > 0 then
-		local uiString = table.concat(uiList, "\n")
-
-		-- Display the collected UI hierarchy in the player's GUI
-		displayUIHierarchy(uiString)
+	-- Collect hierarchy from all descendants of the player
+	local playerHierarchy = collectHierarchy(player, "Player")
+	for _, element in ipairs(playerHierarchy) do
+		table.insert(playerInfoList, element)
 	end
+
+	return playerInfoList
+end
+
+-- Function to collect information from StarterGui and Player, and then display it
+local function checkAndDisplay()
+	-- Collect UI hierarchy from StarterGui
+	local starterGuiHierarchy = collectHierarchy(starterGui, "StarterGui")
+
+	-- Collect player information and hierarchy from all descendants
+	local playerInfo = collectPlayerInfo()
+
+	-- Combine both info
+	local combinedInfo = {}
+	for _, info in ipairs(starterGuiHierarchy) do
+		table.insert(combinedInfo, info)
+		table.insert(combinedInfo, " ") -- Adding space for readability
+		table.insert(combinedInfo, " ")
+	end
+	for _, info in ipairs(playerInfo) do
+		table.insert(combinedInfo, info)
+	end
+
+	-- Display the combined hierarchy and player info
+	displayHierarchy(combinedInfo)
 end
 
 wait(5)
 
--- Collect UI hierarchy from StarterGui and display it in PlayerGui
-checkAndDisplay(starterGui)
+-- Collect and display all necessary information
+checkAndDisplay()
