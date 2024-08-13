@@ -27,7 +27,7 @@ local function displayUIHierarchy(uiString)
 	displayGui.Parent = playerGui  -- This is in PlayerGui to make it visible to the player
 
 	-- Create a Frame with the specified position and size
-	local frame = Instance.new("Frame")
+	local frame = Instance.new("ScrollingFrame")
 	frame.Size = UDim2.new(0, 361, 0, 268)
 	frame.Position = UDim2.new(0.311, 0, 0.239, 0)
 	frame.BackgroundTransparency = 0.3
